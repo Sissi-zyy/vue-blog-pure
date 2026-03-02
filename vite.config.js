@@ -3,7 +3,7 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
-  // 核心修复：关闭模块预加载，强制打包为单文件
+  // 核心修复：打包为 iife 格式，消除浏览器裸导入
   build: {
     target: 'es2015',
     modulePreload: {
@@ -11,16 +11,13 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // 强制打包为单个文件，消除裸导入
+        // 改为兼容的 iife 格式，移除 manualChunks
         format: 'iife',
         entryFileNames: 'assets/index.js',
         chunkFileNames: 'assets/[name].js',
-        assetFileNames: 'assets/[name].[ext]',
-        // 禁止拆分代码，确保所有依赖都在一个文件里
-        manualChunks: () => 'index.js'
+        assetFileNames: 'assets/[name].[ext]'
       }
     },
-    // 关闭源码映射，避免额外文件加载问题
     sourcemap: false
   },
   // 相对路径适配 Netlify
