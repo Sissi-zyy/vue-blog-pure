@@ -3,24 +3,23 @@ import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [vue()],
-  // 核心修复：打包为 iife 格式，消除浏览器裸导入
+  // 核心：兼容浏览器的构建配置，彻底解决裸导入
   build: {
     target: 'es2015',
-    modulePreload: {
-      polyfill: false
-    },
+    // 强制将所有依赖打包到最终文件，消除裸导入
     rollupOptions: {
+      external: [], // 不排除任何依赖，全部打包
       output: {
-        // 改为兼容的 iife 格式，移除 manualChunks
-        format: 'iife',
-        entryFileNames: 'assets/index.js',
+        format: 'es', // Vue 3 推荐的 ES 模块格式
+        // 确保资源路径是相对的
+        entryFileNames: 'assets/[name].js',
         chunkFileNames: 'assets/[name].js',
         assetFileNames: 'assets/[name].[ext]'
       }
     },
     sourcemap: false
   },
-  // 相对路径适配 Netlify
+  // 关键：相对路径，解决资源 404
   base: './',
   server: {
     port: 3000,
