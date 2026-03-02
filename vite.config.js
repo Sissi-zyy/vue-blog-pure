@@ -13,6 +13,19 @@ export default defineConfig({
     port: 3000,
     open: true
   },
-  // 👇 新增这一行！解决部署后资源路径错误的核心配置
-  base: './'
+  base: './',
+  build: {
+    target: 'es2015',
+    modulePreload: {
+      polyfill: true
+    },
+    rollupOptions: {
+      output: {
+        format: 'es',
+        entryFileNames: `assets/[name].[hash].js`,
+        chunkFileNames: `assets/[name].[hash].js`,
+        assetFileNames: `assets/[name].[hash].[ext]`
+      }
+    }
+  }
 })
